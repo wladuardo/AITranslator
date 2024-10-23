@@ -11,7 +11,7 @@ import SwiftUI
 struct TranslatorGPTApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TranslatorScreen()
         }
     }
 }
