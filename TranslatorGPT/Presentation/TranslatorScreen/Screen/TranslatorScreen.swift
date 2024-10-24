@@ -11,6 +11,7 @@ struct TranslatorScreen: View {
     @StateObject private var viewModel: TranslatorViewModel = .init()
     @FocusState private var isFocused: Bool
     @State private var isAlertPresented: Bool = false
+    @State private var isCameraPresented: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -65,6 +66,7 @@ struct TranslatorScreen: View {
         .animation(.bouncy, value: viewModel.isCopied)
         .animation(.bouncy, value: viewModel.isInProcess)
         .disabled(viewModel.isInProcess)
+        .sheet(isPresented: $isCameraPresented) { CameraTextRecognizerView(isPresented: $isCameraPresented, recognizedText: $viewModel.textToTranslate) }
         .alert(viewModel.appError?.failureReason ?? "", isPresented: $isAlertPresented) {
             Button("OK") { isAlertPresented.toggle() }
         } message: {
@@ -155,6 +157,15 @@ private extension TranslatorScreen {
     var editButtons: some View {
         HStack(spacing: 16) {
             Button {
+                isFocused = false
+                isCameraPresented.toggle()
+                HapticFeedbackService.impact(style: .light)
+            } label: {
+                Image(systemName: "camera.fill")
+                    .font(.system(size: 15, weight: .semibold))
+            }
+            
+            Button {
                 guard let pasteboardString = UIPasteboard.general.string else { return }
                 isFocused = false
                 viewModel.textToTranslate += pasteboardString
@@ -169,7 +180,7 @@ private extension TranslatorScreen {
                 viewModel.textToTranslate.removeAll()
                 HapticFeedbackService.impact(style: .light)
             } label: {
-                Image(systemName: "paintbrush")
+                Image(systemName: "paintbrush.fill")
                     .font(.system(size: 15, weight: .semibold))
             }
         }
@@ -203,8 +214,4 @@ private extension TranslatorScreen {
         viewModel.textToTranslate.removeLast()
         isFocused = false
     }
-}
-
-#Preview {
-    TranslatorScreen()
 }

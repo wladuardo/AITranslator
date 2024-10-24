@@ -10,7 +10,7 @@ import Foundation
 public enum Constants {
     public static let baseScheme: String = "https"
     public static let baseHost: String = "api.openai.com"
-    public static let chatGPTAPIKey: String = "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"
+    public static let chatGPTAPIKey: String = "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"
     public static let defaultSystemText = "You're a helpful assistant"
     public static let defaultTemperature = 0.5
 }

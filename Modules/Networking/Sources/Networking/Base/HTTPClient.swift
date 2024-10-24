@@ -47,22 +47,16 @@ public extension HTTPClient {
     func handlingDataTask<T: Decodable>(data: Data?,
                                         response: URLResponse?,
                                         responseModel: T.Type) async throws(HTTPRequestError) -> T {
-        guard let responseCode = (response as? HTTPURLResponse)?.statusCode else {
-            throw .noResponse
-        }
+        guard let responseCode = (response as? HTTPURLResponse)?.statusCode else { throw .noResponse }
         
         switch responseCode {
         case 200...299:
             if responseModel is Data.Type {
                 return responseModel as! T
             }
-            
-            if let decodedData = data?.decode(model: responseModel) {
-                return decodedData
-            } else {
-                throw .decode
-            }
-            
+
+            guard let decodedData = data?.decode(model: responseModel) else { throw .decode }
+            return decodedData
         case 400:
             if let decodeData = data?.decode(model: ValidatorErrorResponse.self) {
                 throw .validator(error: decodeData)
